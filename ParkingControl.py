@@ -13,6 +13,7 @@ def index():
     <a href="/led/blue/on">BLUE LED ON</a>
     <a href="/led/blue/off">BLUE LED OFF</a>
     """
+    # test
 
 if __name__ == "__main__":
     try:
