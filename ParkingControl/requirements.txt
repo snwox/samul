@@ -1,4 +1,0 @@
-pymysql
-flask
-Flask-SocketIO==4.3.1
-python-socketio==4.6.1
