@@ -1,11 +1,44 @@
-<html lang="en">
+<html lang="kor">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"> 
+    <title>차량 조회</title>
 </head>
 <body>
-    <h1>test</h1>
+    <table class="highlight">
+        <thead>
+            <tr>
+                <td>idx</td>
+                <td>id</td>
+                <td>차량 번호</td>
+                <td>입장 시간</td>
+                <td>주차 시간</td>
+                <td>현재 요금</td>
+                <td>결제</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for car in cars %}
+            <tr id='u{{car.id}}'>
+                <td>{{car.idx}}</td>
+                <td>{{car.id}}</td>
+                <td>{{car.number}}</td>
+                <td>{{car.enter_time}}</td>
+                <td class="nowTime"></td>
+                <td class="nowPrice"></td>
+                <td class="out">주차 중..</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <script>
+        const cars = JSON.parse('{{cars|tojson}}');
+        let Timer;
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+    <script src="/templates/js/timer.js"></script>
+    <script src="/templates/js/socket.js"></script>
 </body>
 </html>
