@@ -20,12 +20,12 @@
             </tr>
         </thead>
         <tbody>
-            {% for i in range(0, len(cars)) %}
-            <tr id='u{{cars[i].id}}'>
-                <td></td>
-                <td>{{cars[i].id}}</td>
-                <td>{{cars[i].number}}</td>
-                <td>{{cars[i].enter_time}}</td>
+            {% for car in cars %}
+            <tr id='u{{car.id}}'>
+                <td>{{loop.index}}</td>
+                <td>{{car.id}}</td>
+                <td>{{car.number}}</td>
+                <td>{{car.enter_time}}</td>
                 <td class="nowTime"></td>
                 <td class="nowPrice"></td>
                 <td class="out">주차 중..</td>

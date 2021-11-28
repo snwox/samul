@@ -4,8 +4,8 @@ class Production:
     DEBUG = False
     SECRET_KEY = os.urandom(32)
     TIMEZONE = "Asia/Seoul"
-    DB_PASS = "1121"
-    DB_NAME = "CAR_STAT" 
+    DB_PASS = ""
+    DB_NAME = "carmanager" 
     DB_HOST = "localhost"
     DB_USER = "root"
 
