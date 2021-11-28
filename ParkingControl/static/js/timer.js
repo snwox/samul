@@ -12,6 +12,7 @@ let carTimer = [];
             enterTime: i.enter_timeS
         });
     }
+    if(carTimer.length === 0) return;
     
     Timer = setInterval(() => {
         for(let car of carTimer) {
@@ -25,7 +26,7 @@ let carTimer = [];
             const seconds = Math.floor(time / 1000);
     
             car.carTimeTable.innerHTML = `${day}일 ${hour}시 ${minute}분 ${seconds}초`;
-            car.carFeeTable.inneerHTML = `${Math.floor(minute/5) * 400} 원`;
+            car.carFeeTable.innerHTML = `${Math.floor(minute/5) * 400} 원`;
         }
     }, 1000);
 })();

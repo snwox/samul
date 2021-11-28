@@ -16,14 +16,14 @@ else:
 app=Flask(__name__)
 app.config.from_object(CONF)
 
-socketio = SocketIO(app)
+socketio = SocketIO(app, cors_allowed_origins='*')
 
 db=dbModule.Database()
 print(db)
 
 @app.route("/")
 def index():
-    cars = [{'id': 1, 'number': '000테0001', 'enter_time': '2021년 귀월 찮일', 'enter_timeS': 12349900}]
+    cars = [{'id': 1, 'number': '000테0001', 'enter_time': '2021년 귀월 찮일', 'enter_timeS': 1638100119274}]
 
     return render_template('index.html', cars=cars)
 
@@ -53,5 +53,4 @@ def carOut(data):
         emit('err', {"msg": '제거 에러'})
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", debug=True)
-    socketio.run(host="0.0.0.0",debug=True)
+    socketio.run(app, debug=True)
