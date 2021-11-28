@@ -51,11 +51,4 @@ def carOut(data):
         emit('err', {"msg": '제거 에러'})
 
 if __name__ == "__main__":
-<<<<<<< HEAD
-    db=dbModule.Database()
-    print(db)
-    socketio.run(app,host="0.0.0.0",debug=True,port=5000)
-=======
-    app.run(host="0.0.0.0", debug=True)
     socketio.run(host="0.0.0.0",debug=True)
->>>>>>> d64cea45d584af3aea0c1f71e2042995f3ceb6c6
