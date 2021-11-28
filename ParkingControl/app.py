@@ -24,6 +24,7 @@ print(db)
 @app.route("/")
 def index():
     cars = [{'id': 1, 'number': '000테0001', 'enter_time': '2021년 귀월 찮일', 'enter_timeS': 1638100119274}]
+    # cars = db.executeAll('SELECT * FROM status')
 
     return render_template('index.html', cars=cars)
 
