@@ -1,4 +1,5 @@
-const socket = io();
+// const socket = io.connect("http://" + document.domain + ":" + location.port);
+const socket = socket = io.connect('http://localhost:5000');
 
 socket.on('connect', () => {
     console.log("소켓 연결 성공");

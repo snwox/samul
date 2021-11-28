@@ -10,12 +10,18 @@ import threading
 
 trig_pin=4
 echo_pin=14
+led_pin=21
+
 
 try:
     import RPi.GPIO as GPIO
+    from lcd import drivers
+
+    display = drivers.Lcd()
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(trig_pin,GPIO.OUT)
     GPIO.setup(echo_pin,GPIO.IN)
+    GPIO.setup(led_pin,GPIO.OUT)
 
 except:
     pass
@@ -28,13 +34,13 @@ else:
 app=Flask(__name__)
 app.config.from_object(CONF)
 
-socketio = SocketIO(app)
+socketio = SocketIO(app, cors_allowed_origins='*')
 
 def go_out():
     try:
         for i in range(10):
             GPIO.output(trig_pin,True)
-            time.sleep(0x00001)
+            time.sleep(0.00001)
             GPIO.output(trig_pin,False)
 
             while GPIO.input(echo_pin)==0:
@@ -47,15 +53,24 @@ def go_out():
             distance=duration_time * 17160
             print('distance : %.1f',distance)
             if distance > 100:
-                
-    finally:
+                #picture and capture car
+                car_num=''
+
+                #database 조회 후 소켓 보내기
+                GPIO.output(led_pin,1)
+                display.lcd_display(car_num,1)
+                pass
+    # finally:
         GPIO.cleanup()
+        display.lcd_clear()
         print("clean up and exit")
+    except:
+        pass
     
 
 @app.route("/")
 def index():
-    cars = [{'id': 1, 'number': '000테0001', 'enter_time': '2021년 귀월 찮일', 'enter_timeS': 12349900}]
+    cars = [{'id': 1, 'number': '000테0001', 'enter_time': '2021년 귀월 찮일', 'enter_timeS': 1638100119274}]
 
     return render_template('index.html', cars=cars)
 
