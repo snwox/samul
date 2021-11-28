@@ -13,7 +13,7 @@ class Dev:
     DEBUG = True
     SECRET_KEY = "1234"
     TIMEZONE = "Asia/Seoul"
-    DB_PASS = "1121"
-    DB_NAME = "CAR_STAT" 
+    DB_PASS = ""
+    DB_NAME = "carmanager" 
     DB_HOST = "localhost"
     DB_USER = "root"

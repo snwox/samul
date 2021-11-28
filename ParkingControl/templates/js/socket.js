@@ -5,7 +5,7 @@ socket.on('connect', () => {
 });
 
 socket.on('enter', (data) => {
-    cars.push(data.enterCar);
+    cars.push(data.data);
     setCarTimer();
 });
 
@@ -20,6 +20,7 @@ socket.on('out', (data) => {
     aTag.onclick = () => {
         const table = document.getElementById(`u${data.id}`);
         table.parentNode.removeChild(table);
+        socket.emit('out', {id: data.id});
     }
     const out = document.querySelector(`u${data.id} > .out`);
     out.innerHTML = "";
