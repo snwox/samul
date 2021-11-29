@@ -21,10 +21,10 @@ USE `carmanager`;
 CREATE TABLE IF NOT EXISTS `status` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `number` char(50) NOT NULL DEFAULT '0',
-  `enter_time` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `enter_timeS` int(15) DEFAULT NULL,
+  `enter_time` char(50) NOT NULL,
+  `enter_timeS` bigint(13) unsigned zerofill NOT NULL DEFAULT 0000000000000,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4;
 
 -- 테이블 데이터 carmanager.status:~0 rows (대략적) 내보내기
 /*!40000 ALTER TABLE `status` DISABLE KEYS */;

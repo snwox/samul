@@ -9,7 +9,7 @@ sio.connect('http://localhost:5000')
 
 plt.style.use('dark_background')
 
-img_ori = cv2.imread('1.jpg')
+img_ori = cv2.imread('5.png')
 
 height, width, channel = img_ori.shape
 
@@ -144,7 +144,9 @@ def find_chars(contour_list):
             width_diff = abs(d1['w'] - d2['w']) / d1['w']
             height_diff = abs(d1['h'] - d2['h']) / d1['h']
 
-            if distance < diagonal_length1 * MAX_DIAG_MULTIPLYER             and angle_diff < MAX_ANGLE_DIFF and area_diff < MAX_AREA_DIFF             and width_diff < MAX_WIDTH_DIFF and height_diff < MAX_HEIGHT_DIFF:
+            if distance < diagonal_length1 * MAX_DIAG_MULTIPLYER \
+            and angle_diff < MAX_ANGLE_DIFF and area_diff < MAX_AREA_DIFF \
+            and width_diff < MAX_WIDTH_DIFF and height_diff < MAX_HEIGHT_DIFF:
                 matched_contours_idx.append(d2['idx'])
 
         # append this contour
