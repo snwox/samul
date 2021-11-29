@@ -31,6 +31,8 @@ if os.getenv("env") == "Dev":
 else:
     from config import Production as CONF
 
+db=dbModule.Database()
+
 app=Flask(__name__)
 app.config.from_object(CONF)
 
