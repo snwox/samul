@@ -1,12 +1,30 @@
 from flask import Flask,app,render_template
 from flask_socketio import SocketIO
 from module import dbModule
-
 from datetime import datetime as dt
 
 import os
 import time
 import json
+import threading
+
+trig_pin=4
+echo_pin=14
+led_pin=21
+
+
+try:
+    import RPi.GPIO as GPIO
+    from lcd import drivers
+
+    display = drivers.Lcd()
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(trig_pin,GPIO.OUT)
+    GPIO.setup(echo_pin,GPIO.IN)
+    GPIO.setup(led_pin,GPIO.OUT)
+
+except:
+    pass
 
 if os.getenv("env") == "Dev":
     from config import Dev as CONF
@@ -18,8 +36,37 @@ app.config.from_object(CONF)
 
 socketio = SocketIO(app, cors_allowed_origins='*')
 
-db=dbModule.Database()
-print(db)
+def go_out():
+    try:
+        for i in range(10):
+            GPIO.output(trig_pin,True)
+            time.sleep(0.00001)
+            GPIO.output(trig_pin,False)
+
+            while GPIO.input(echo_pin)==0:
+                pass
+            start=time.time()
+            while GPIO.input(echo_pin)==1:
+                pass
+            stop=time.time()
+            duration_time=stop-start
+            distance=duration_time * 17160
+            print('distance : %.1f',distance)
+            if distance > 100:
+                #picture and capture car
+                car_num=''
+
+                #database 조회 후 소켓 보내기
+                GPIO.output(led_pin,1)
+                display.lcd_display(car_num,1)
+                pass
+    # finally:
+        GPIO.cleanup()
+        display.lcd_clear()
+        print("clean up and exit")
+    except:
+        pass
+    
 
 @app.route("/")
 def index():
@@ -57,4 +104,7 @@ def carOut(data):
         socketio.emit('err', {"msg": '제거 에러'})
 
 if __name__ == "__main__":
-    socketio.run(app, debug=True)
+    t=threading.Thread(target=go_out)
+    t.daemon=True
+    t.start()
+    socketio.run(app,host="0.0.0.0",debug=True)
