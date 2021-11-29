@@ -1,6 +1,6 @@
 let carTimer = [];
 
-(function setCarTimer() {
+function setCarTimer() {
     if(Timer !== undefined) clearInterval(Timer);
     
     carTimer = [];
@@ -29,4 +29,6 @@ let carTimer = [];
             car.carFeeTable.innerHTML = `${Math.floor(minute/5) * 400} 원`;
         }
     }, 1000);
-})();
+};
+
+setCarTimer();

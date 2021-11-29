@@ -1,5 +1,5 @@
 from flask import Flask,app,render_template
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO
 from module import dbModule
 
 from datetime import datetime as dt
@@ -23,35 +23,38 @@ print(db)
 
 @app.route("/")
 def index():
-    cars = [{'id': 1, 'number': '000테0001', 'enter_time': '2021년 귀월 찮일', 'enter_timeS': 1638100119274}]
-    # cars = db.executeAll('SELECT * FROM status')
+    # cars = [{'id': 1, 'number': '000테0001', 'enter_time': '2021년 귀월 찮일', 'enter_timeS': 1638100119274}]
+    cars = db.executeAll('SELECT * FROM status')
 
     return render_template('index.html', cars=cars)
 
 @socketio.on('eo')
 def carEnterOut(data):
-    car = db.executeOne('SELECT * FROM status WHERE number=?', (data.number))
+    print(data)
+    car = db.executeOne('SELECT * FROM status WHERE number=%s', (data))
     if not car:
         now = dt.now()
         now_stamp = int(json.dumps(time.mktime(now.timetuple())*1000).split(".")[0])
         enterTime = now.strftime('%Y년 %m월 %d일  %H:%M:%S')
-        uid = db.executeOne('SELECT Auto_increment FROM information_schema.tables WHERE table_schema=`carmanager` AND table_name=`status`')
-        db.execute('INSERT INTO status (number, enter_time, enter_timeS) VALUES (?,?,?)', (data.number, enterTime, now_stamp))
-        emit('enter', {data: {
-            "id": uid,
-            "number": data.number,
+        uid = db.executeOne('SELECT Auto_increment FROM information_schema.tables WHERE table_schema="carmanager" AND table_name="status"')
+        db.execute('INSERT INTO status (number, enter_time, enter_timeS) VALUES (%s,%s,%s)', (data, enterTime, now_stamp))
+        db.commit()
+        socketio.emit('enter', {'data': {
+            "id": uid['Auto_increment'],
+            "number": data,
             "enter_time": enterTime,
             "enter_timeS": now_stamp
         }})
     else:
-        emit('out', {"id": car.id})
+        socketio.emit('out', {"id": car['id']})
 
 @socketio.on('out')
 def carOut(data):
     try:
-        db.execute('DELETE FROM status WHERE id=?', (data.id))
+        db.execute('DELETE FROM status WHERE id=%s', (data['id']))
+        db.commit()
     except:
-        emit('err', {"msg": '제거 에러'})
+        socketio.emit('err', {"msg": '제거 에러'})
 
 if __name__ == "__main__":
     socketio.run(app, debug=True)

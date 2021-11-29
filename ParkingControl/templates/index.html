@@ -12,7 +12,7 @@
     </style>
 </head>
 <body>
-    <table class="highlight">
+    <table class="highlight" id="carTable">
         <thead>
             <tr>
                 <td>idx</td>
@@ -39,7 +39,7 @@
         </tbody>
     </table>
     <script>
-        const cars = JSON.parse('{{cars|tojson}}');
+        const cars = {{cars|tojson}};
         let Timer;
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
