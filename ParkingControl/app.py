@@ -3,6 +3,7 @@ from flask_socketio import SocketIO
 from module import dbModule, licensePlate
 from datetime import datetime as dt
 
+import cv2
 import os
 import time
 import json
@@ -14,18 +15,11 @@ led_pin=21
 
 # 번호판 구하기  = licensePlate.detect(cv2로 찍은 이미지 파일)   : 리턴값 = 번호판
 
-try:
-    import RPi.GPIO as GPIO
-    from lcd import drivers
+import RPi.GPIO as GPIO
+from lcd import drivers
+from module import licensePlate
 
-    display = drivers.Lcd()
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setup(trig_pin,GPIO.OUT)
-    GPIO.setup(echo_pin,GPIO.IN)
-    GPIO.setup(led_pin,GPIO.OUT)
 
-except:
-    pass
 
 if os.getenv("env") == "Dev":
     from config import Dev as CONF
@@ -41,7 +35,17 @@ socketio = SocketIO(app, cors_allowed_origins='*')
 
 def go_out():
     try:
-        for i in range(10):
+        display = drivers.Lcd()
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(trig_pin,GPIO.OUT)
+        GPIO.setup(echo_pin,GPIO.IN)
+        GPIO.setup(led_pin,GPIO.OUT)
+        cap=cv2.VideoCapture(0)
+
+        if not cap.isOpened():
+            print("camera error")
+            exit()
+        while True:
             GPIO.output(trig_pin,True)
             time.sleep(0.00001)
             GPIO.output(trig_pin,False)
@@ -55,20 +59,26 @@ def go_out():
             duration_time=stop-start
             distance=duration_time * 17160
             print('distance : %.1f',distance)
-            if distance > 100:
-                #picture and capture car
-                car_num=''
-
-                #database 조회 후 소켓 보내기
+            if distance<=30:
                 GPIO.output(led_pin,1)
-                display.lcd_display(car_num,1)
-                pass
-    # finally:
+                ret,frame=cap.read()
+                if not ret:
+                    break
+                cv2.imshow("frame",frame)
+                if cv2.waitKey(10)==27:
+                    cv2.imwrite('output.jpg',frame)
+                    break
+                car_num=licensePlate.detect(frame)
+                print(f"----------------------\n{car_num}\n--------------------")
+
+                GPIO.output(led_pin,1)
+                display.lcd_display_string(car_num,1)
+            else:
+                GPIO.output(led_pin,0)
+    finally:
         GPIO.cleanup()
         display.lcd_clear()
         print("clean up and exit")
-    except:
-        pass
     
 
 @app.route("/")
