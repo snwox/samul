@@ -1,6 +1,6 @@
 from flask import Flask,app,render_template
 from flask_socketio import SocketIO
-from module import dbModule
+from module import dbModule, licensePlate
 from datetime import datetime as dt
 
 import os
@@ -12,6 +12,7 @@ trig_pin=4
 echo_pin=14
 led_pin=21
 
+# 번호판 구하기  = licensePlate.detect(cv2로 찍은 이미지 파일)   : 리턴값 = 번호판
 
 try:
     import RPi.GPIO as GPIO
