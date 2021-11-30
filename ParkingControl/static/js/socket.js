@@ -56,7 +56,7 @@ socket.on('out', (data) => {
         socket.emit('out', {id: data.id});
     }
     const out = document.querySelector(`#u${data.id} > .out`);
-    console.log(data.id);
+    
     out.innerHTML = "";
     out.append(aTag);
 

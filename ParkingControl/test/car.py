@@ -9,7 +9,7 @@ sio.connect('http://localhost:5000')
 
 plt.style.use('dark_background')
 
-img_ori = cv2.imread('5.png')
+img_ori = cv2.imread('pi.png')
 
 height, width, channel = img_ori.shape
 
