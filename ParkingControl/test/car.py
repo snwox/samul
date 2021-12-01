@@ -2,24 +2,24 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 import pytesseract
-import socketio
+# import socketio
 
-sio = socketio.Client()
-sio.connect('http://localhost:5000')
+# sio = socketio.Client()
+# sio.connect('http://localhost:5000')
 
 plt.style.use('dark_background')
 
-img_ori = cv2.imread('pi.png')
+img_ori = cv2.imread('1.jpg')
 
 height, width, channel = img_ori.shape
 
-plt.figure(figsize=(12, 10))
-plt.imshow(img_ori, cmap='gray')
+# plt.figure(figsize=(12, 10))
+# plt.imshow(img_ori, cmap='gray')
 
 gray = cv2.cvtColor(img_ori, cv2.COLOR_BGR2GRAY)
 
-plt.figure(figsize=(12, 10))
-plt.imshow(gray, cmap='gray')
+# plt.figure(figsize=(12, 10))
+# plt.imshow(gray, cmap='gray')
 
 structuringElement = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
 
@@ -29,8 +29,8 @@ imgBlackHat = cv2.morphologyEx(gray, cv2.MORPH_BLACKHAT, structuringElement)
 imgGrayscalePlusTopHat = cv2.add(gray, imgTopHat)
 gray = cv2.subtract(imgGrayscalePlusTopHat, imgBlackHat)
 
-plt.figure(figsize=(12, 10))
-plt.imshow(gray, cmap='gray')
+# plt.figure(figsize=(12, 10))
+# plt.imshow(gray, cmap='gray')
 
 
 img_blurred = cv2.GaussianBlur(gray, ksize=(5, 5), sigmaX=0)
@@ -44,8 +44,8 @@ img_thresh = cv2.adaptiveThreshold(
     C=9
 )
 
-plt.figure(figsize=(12, 10))
-plt.imshow(img_thresh, cmap='gray')
+# plt.figure(figsize=(12, 10))
+# plt.imshow(img_thresh, cmap='gray')
 
 
 contours, _ = cv2.findContours(
@@ -58,8 +58,8 @@ temp_result = np.zeros((height, width, channel), dtype=np.uint8)
 
 cv2.drawContours(temp_result, contours=contours, contourIdx=-1, color=(255, 255, 255))
 
-plt.figure(figsize=(12, 10))
-plt.imshow(temp_result)
+# plt.figure(figsize=(12, 10))
+# plt.imshow(temp_result)
 
 
 
@@ -82,8 +82,8 @@ for contour in contours:
         'cy': y + (h / 2)
     })
 
-plt.figure(figsize=(12, 10))
-plt.imshow(temp_result, cmap='gray')
+# plt.figure(figsize=(12, 10))
+# plt.imshow(temp_result, cmap='gray')
 
 
 
@@ -110,8 +110,8 @@ for d in possible_contours:
 #     cv2.drawContours(temp_result, d['contour'], -1, (255, 255, 255))
     cv2.rectangle(temp_result, pt1=(d['x'], d['y']), pt2=(d['x']+d['w'], d['y']+d['h']), color=(255, 255, 255), thickness=2)
 
-plt.figure(figsize=(12, 10))
-plt.imshow(temp_result, cmap='gray')
+# plt.figure(figsize=(12, 10))
+# plt.imshow(temp_result, cmap='gray')
 
 
 MAX_DIAG_MULTIPLYER = 5 # 5
@@ -188,8 +188,8 @@ for r in matched_result:
 #         cv2.drawContours(temp_result, d['contour'], -1, (255, 255, 255))
         cv2.rectangle(temp_result, pt1=(d['x'], d['y']), pt2=(d['x']+d['w'], d['y']+d['h']), color=(255, 255, 255), thickness=2)
 
-plt.figure(figsize=(12, 10))
-plt.imshow(temp_result, cmap='gray')
+# plt.figure(figsize=(12, 10))
+# plt.imshow(temp_result, cmap='gray')
 
 
 PLATE_WIDTH_PADDING = 1.3 # 1.3
@@ -242,10 +242,10 @@ for i, matched_chars in enumerate(matched_result):
         'w': int(plate_width),
         'h': int(plate_height)
     })
-    plt.figure()
+    # plt.figure()
 
     plt.subplot(len(matched_result), 1, i+1)
-    plt.imshow(img_cropped, cmap='gray')
+    # plt.imshow(img_cropped, cmap='gray')
 
 
     longest_idx, longest_text = -1, 0
@@ -299,9 +299,9 @@ for i, plate_img in enumerate(plate_imgs):
     if has_digit and len(result_chars) > longest_text:
         longest_idx = i
 
-    plt.figure()
-    plt.subplot(len(plate_imgs), 1, i+1)
-    plt.imshow(img_result, cmap='gray')
+    # plt.figure()
+    # plt.subplot(len(plate_imgs), 1, i+1)
+    # plt.imshow(img_result, cmap='gray')
 
 
 
@@ -310,15 +310,15 @@ chars = plate_chars[longest_idx]
 
 print(chars)
 
-img_out = img_ori.copy()
+# img_out = img_ori.copy()
 
-cv2.rectangle(img_out, pt1=(info['x'], info['y']), pt2=(info['x']+info['w'], info['y']+info['h']), color=(255,0,0), thickness=2)
+# cv2.rectangle(img_out, pt1=(info['x'], info['y']), pt2=(info['x']+info['w'], info['y']+info['h']), color=(255,0,0), thickness=2)
 
-plt.figure(figsize=(12, 10))
-plt.imshow(img_out)
+# plt.figure(figsize=(12, 10))
+# plt.imshow(img_out)
 
-sio.emit('eo', chars)
-sio.disconnect()
+# sio.emit('eo', chars)
+# sio.disconnect()
 
 exit()
 
