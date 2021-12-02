@@ -1,6 +1,6 @@
 import os
 
-class Production:
+class Production:       # db, secret key 등을 설정한다.
     DEBUG = False
     SECRET_KEY = os.urandom(32)
     TIMEZONE = "Asia/Seoul"

@@ -24,7 +24,7 @@ if os.getenv("env") == "Dev":
 else:
     from config import Production as CONF
 
-db=dbModule.Database()
+db=dbModule.Database()    
 
 app=Flask(__name__)
 app.config.from_object(CONF)
@@ -32,12 +32,13 @@ app.config.from_object(CONF)
 socketio = SocketIO(app, cors_allowed_origins='*')
 
 @app.route("/")
-def index():
+def index():                # database 에 차량목록 가져와서 메인페이지에 추력
     cars = db.executeAll('SELECT * FROM status')
 
     return render_template('index.html', cars=cars)
 
-@socketio.on('eo')
+@socketio.on('eo')          # licensePlate 모듈에서 차량번호를 소켓으로 보낼 때 
+                            # 신규차량이면 차의 id, 차번호, 입장시간, 현재시간을 내보내고, 이미 있는 차량이면, out 을 내보낸다.
 def carEnterOut(data):
     print(data)
     car = db.executeOne('SELECT * FROM status WHERE number=%s', (data))
@@ -57,7 +58,7 @@ def carEnterOut(data):
     else:
         socketio.emit('out', {"id": car['id']})
 
-@socketio.on('out')
+@socketio.on('out')     # 소켓으로 out 을 내보냈을 때 database 에서 삭제한다.
 def carOut(data):
     try:
         db.execute('DELETE FROM status WHERE id=%s', (data['id']))

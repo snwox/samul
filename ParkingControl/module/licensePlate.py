@@ -5,7 +5,7 @@ import pytesseract
 import socketio
 
 try:
-    def detect(frame):
+    def detect(frame):              # 오픈소스를 활용해 
         plt.style.use('dark_background')
         sio = socketio.Client()
         sio.connect('http://localhost:5000')
@@ -315,7 +315,9 @@ try:
 
         # plt.figure(figsize=(12, 10))
         # plt.imshow(img_out)
-        if chars[-4:].strip(' ').isdigit() and chars[:2].lstrip(" ").isdigit():
+        if chars[-4:].strip(' ').isdigit() and chars[:2].lstrip(" ").isdigit(): # 차량번호가 정상적인지 검사. 
+                                                                                # "딥 12 가 2345" 이런식으로 검색되는 경우가 있음
+                                                                                # 소켓으로 차번호를 내보내서 메인페이지에 실시간으로 업데이트할 수 있도록 한다.
             sio.emit('eo', chars)
             sio.disconnect()
             plt.clf()
