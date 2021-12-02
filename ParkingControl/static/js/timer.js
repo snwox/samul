@@ -26,7 +26,7 @@ function setCarTimer() {
             const seconds = Math.floor((time / 1000 ) % 60);
     
             car.carTimeTable.innerHTML = `${day}일 ${hour}시 ${minute}분 ${seconds}초`;
-            car.carFeeTable.innerHTML = `${Math.floor(minute/5) * 400} 원`;
+            car.carFeeTable.innerHTML = `${Math.floor(time / 1000)} 원`;
         }
     }, 1000);
 };

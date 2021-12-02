@@ -22,6 +22,7 @@ socket.on('enter', (data) => {
     uid.innerHTML = data.data.id;
     number.innerHTML = data.data.number;
     enter_time.innerHTML = data.data.enter_time;
+    nowPrice.innerHTML = "0 원";
     out.innerHTML = "주차 중";
 
     nowTime.classList.add("nowTime");

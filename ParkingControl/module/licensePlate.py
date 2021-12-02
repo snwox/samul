@@ -4,21 +4,21 @@ import matplotlib.pyplot as plt
 import pytesseract
 import socketio
 
-def detect(img_ori):
-    try:
-            # sio = socketio.Client()
-            # sio.connect('http://localhost:5000')
-
+try:
+    def detect(frame):
         plt.style.use('dark_background')
+        sio = socketio.Client()
+        sio.connect('http://localhost:5000')
+        img_ori = frame
 
         height, width, channel = img_ori.shape
 
-        plt.figure(figsize=(12, 10))
+        # plt.figure(figsize=(12, 10))
         # plt.imshow(img_ori, cmap='gray')
 
         gray = cv2.cvtColor(img_ori, cv2.COLOR_BGR2GRAY)
 
-        plt.figure(figsize=(12, 10))
+        # plt.figure(figsize=(12, 10))
         # plt.imshow(gray, cmap='gray')
 
         structuringElement = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
@@ -29,7 +29,7 @@ def detect(img_ori):
         imgGrayscalePlusTopHat = cv2.add(gray, imgTopHat)
         gray = cv2.subtract(imgGrayscalePlusTopHat, imgBlackHat)
 
-        plt.figure(figsize=(12, 10))
+        # plt.figure(figsize=(12, 10))
         # plt.imshow(gray, cmap='gray')
 
 
@@ -44,7 +44,7 @@ def detect(img_ori):
             C=9
         )
 
-        plt.figure(figsize=(12, 10))
+        # plt.figure(figsize=(12, 10))
         # plt.imshow(img_thresh, cmap='gray')
 
 
@@ -58,7 +58,7 @@ def detect(img_ori):
 
         cv2.drawContours(temp_result, contours=contours, contourIdx=-1, color=(255, 255, 255))
 
-        plt.figure(figsize=(12, 10))
+        # plt.figure(figsize=(12, 10))
         # plt.imshow(temp_result)
 
 
@@ -82,7 +82,7 @@ def detect(img_ori):
                 'cy': y + (h / 2)
             })
 
-        plt.figure(figsize=(12, 10))
+        # plt.figure(figsize=(12, 10))
         # plt.imshow(temp_result, cmap='gray')
 
 
@@ -110,7 +110,7 @@ def detect(img_ori):
         #     cv2.drawContours(temp_result, d['contour'], -1, (255, 255, 255))
             cv2.rectangle(temp_result, pt1=(d['x'], d['y']), pt2=(d['x']+d['w'], d['y']+d['h']), color=(255, 255, 255), thickness=2)
 
-        plt.figure(figsize=(12, 10))
+        # plt.figure(figsize=(12, 10))
         # plt.imshow(temp_result, cmap='gray')
 
 
@@ -188,7 +188,7 @@ def detect(img_ori):
         #         cv2.drawContours(temp_result, d['contour'], -1, (255, 255, 255))
                 cv2.rectangle(temp_result, pt1=(d['x'], d['y']), pt2=(d['x']+d['w'], d['y']+d['h']), color=(255, 255, 255), thickness=2)
 
-        plt.figure(figsize=(12, 10))
+        # plt.figure(figsize=(12, 10))
         # plt.imshow(temp_result, cmap='gray')
 
 
@@ -242,7 +242,7 @@ def detect(img_ori):
                 'w': int(plate_width),
                 'h': int(plate_height)
             })
-            plt.figure()
+            # plt.figure()
 
             plt.subplot(len(matched_result), 1, i+1)
             # plt.imshow(img_cropped, cmap='gray')
@@ -299,8 +299,8 @@ def detect(img_ori):
             if has_digit and len(result_chars) > longest_text:
                 longest_idx = i
 
-            plt.figure()
-            plt.subplot(len(plate_imgs), 1, i+1)
+            # plt.figure()
+            # plt.subplot(len(plate_imgs), 1, i+1)
             # plt.imshow(img_result, cmap='gray')
 
 
@@ -308,20 +308,29 @@ def detect(img_ori):
         info = plate_infos[longest_idx]
         chars = plate_chars[longest_idx]
 
-        img_out = img_ori.copy()
 
-        cv2.rectangle(img_out, pt1=(info['x'], info['y']), pt2=(info['x']+info['w'], info['y']+info['h']), color=(255,0,0), thickness=2)
+        # img_out = img_ori.copy()
 
-        plt.figure(figsize=(12, 10))
+        # cv2.rectangle(img_out, pt1=(info['x'], info['y']), pt2=(info['x']+info['w'], info['y']+info['h']), color=(255,0,0), thickness=2)
+
+        # plt.figure(figsize=(12, 10))
         # plt.imshow(img_out)
-
-        # sio.emit('eo', chars)
-        # sio.disconnect()
-
-        return chars
+        if chars[-4:].strip(' ').isdigit() and chars[:2].lstrip(" ").isdigit():
+            sio.emit('eo', chars)
+            sio.disconnect()
+            plt.clf()
+        else:
+            plt.clf()
+            return [0,chars]
+        return [1,chars]
 
         # sudo apt install tesseract-ocr 
         # sudo apt install libtesseract-dev
         # sudo apt-get install tesseract-ocr-kor
-    except Exception as e:
-        print(e)
+except Exception as e:
+    # del cv2
+    # plt.clf()
+    plt.clf()
+    # plt.close()
+    print(e)
+    
