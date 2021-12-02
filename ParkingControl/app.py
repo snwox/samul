@@ -41,15 +41,15 @@ def index():                # database 에 차량목록 가져와서 메인페�
                             # 신규차량이면 차의 id, 차번호, 입장시간, 현재시간을 내보내고, 이미 있는 차량이면, out 을 내보낸다.
 def carEnterOut(data):
     print(data)
-    car = db.executeOne('SELECT * FROM status WHERE number=%s', (data))
-    if not car:
-        now = dt.now()
-        now_stamp = int(json.dumps(time.mktime(now.timetuple())*1000).split(".")[0])
-        enterTime = now.strftime('%Y년 %m월 %d일  %H:%M:%S')
-        uid = db.executeOne('SELECT Auto_increment FROM information_schema.tables WHERE table_schema="carmanager" AND table_name="status"')
-        db.execute('INSERT INTO status (number, enter_time, enter_timeS) VALUES (%s,%s,%s)', (data, enterTime, now_stamp))
+    car = db.executeOne('SELECT * FROM status WHERE number=%s', (data))  # 현재 동일 번호판과 등록된 차량이 있는지 검사
+    if not car:          # 등록된 차량이 없으면
+        now = dt.now()   # 현재 시간 구함
+        now_stamp = int(json.dumps(time.mktime(now.timetuple())*1000).split(".")[0])  # timestamp를 자바스크립트 형식(13자리)으로 바꾸기 위한 코드
+        enterTime = now.strftime('%Y년 %m월 %d일  %H:%M:%S')  # 읽기 편하게 바꿈
+        uid = db.executeOne('SELECT Auto_increment FROM information_schema.tables WHERE table_schema="carmanager" AND table_name="status"')  # 다음 고유번호를 불러옴
+        db.execute('INSERT INTO status (number, enter_time, enter_timeS) VALUES (%s,%s,%s)', (data, enterTime, now_stamp))  # 데이터들을 저장함 (고유번호는 자동으로 생성됨)
         db.commit()
-        socketio.emit('enter', {'data': {
+        socketio.emit('enter', {'data': {  # 클라이언트에 소켓 전송
             "id": uid['Auto_increment'],
             "number": data,
             "enter_time": enterTime,
@@ -68,4 +68,4 @@ def carOut(data):
 
 if __name__ == "__main__":
     print("hello")
-    socketio.run(app,host="0.0.0.0",debug=True)
+    socketio.run(app,host="0.0.0.0",debug=True)  # 서버 시작
